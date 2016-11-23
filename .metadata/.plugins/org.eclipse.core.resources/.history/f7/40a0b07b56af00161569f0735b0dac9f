@@ -1,0 +1,292 @@
+import java.util.ArrayList;
+
+/**
+* The purpose of this class is to create and manage a Bank Account.
+* 
+* @author Alfonso Leone
+* @version 1.0
+*/
+
+class BankAccount 
+{
+	ArrayList<Transaction> transactions;
+	int balance;
+	
+/**
+ * This is the Bank Account constructor which takes an initial balance as parameter
+ * and then creates a new ArrayList of transactions
+ * 
+ * @param aBalance	initial balance
+ */
+	public BankAccount(int aBalance)
+	{
+		this.balance = aBalance;
+		transactions = new ArrayList<Transaction>();
+	}
+	
+
+	public int getBalance() {
+		return balance;
+	}
+
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}
+	
+	/**
+	 * This is the method used to withdraw. Before withdrawing it checks if there
+	 * is money to withdraw and if not it makes the thread asking for withdraw to wait
+	 * 
+	 * @param amount	how much money to withdraw
+	 */
+	public void withdraw(int amount) {
+		if (balance - amount < 0)
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		
+		balance = balance - amount;
+	}
+
+	/**
+	 * This is the method used to deposit. After depositing money it notifies all
+	 * the possible waiting threads that there is money to withdraw.
+	 * 
+	 * @param amount	how much money to deposit
+	 */
+	public void deposit(int amount) {
+		balance = balance + amount;
+		notifyAll();
+	}
+	
+	/**
+	 * This method creates an instance of a Transaction class and
+	 * stores it inside the ArrayList transactions. This method also stores the
+	 * actual value of balance when the transaction is just made from a thread.
+	 * 
+	 * @param type	it can be a Transaction.WITHDRAWAL or Transaction.DEPOSIT
+	 * @param value	how much money to deposit or withdraw
+	 * @param threadId	the Id of the thread responsible for the transaction
+	 */
+	public void addTransaction(int type, int value, long threadId)
+	{
+		transactions.add(new Transaction(type, value, balance, threadId));
+	}
+	
+	/**
+	 * This is a simple method which prints out all the instances of Transaction
+	 * stored inside the ArrayList transactions. There is an IF statement to determine whether
+	 * the value of the transaction has to be printed below the deposit or withdrawal column.
+	 */
+	public void printTransactions()
+	{
+		System.out.println("Transaction" + "\t" + "Withdrawal" + "\t" + "Deposit" + "\t\t" + "Balance");
+		System.out.println("");
+		
+		for(int i = 0; i < transactions.size(); i++)
+		{
+			Transaction t = transactions.get(i);
+			if(t.getType() == Transaction.WITHDRAWAL) 
+			{
+				System.out.print(i+1 + " ");
+				System.out.println("("+(t.getThreadId()-9)+")" + "\t\t" + t.getValue() + "\t\t" + "" + "\t\t" + t.getAccountBalance());
+			}
+			else
+			{
+				System.out.print(i+1 + " ");
+				System.out.println("("+(t.getThreadId()-9)+")" + "\t\t" + "" + "\t\t" + t.getValue()  + "\t\t" + t.getAccountBalance());
+			}
+		}
+		
+	}
+
+}
+
+
+/**
+ * This is a class that represents a transaction and its details
+ * 
+ * @author Alfonso Leone
+ * @version 1.0
+ *
+ */
+class Transaction
+{
+	public static final int WITHDRAWAL = 0;
+	public static final int DEPOSIT = 1;
+	
+	int type, value, accountBalance;
+	long threadId;
+	
+	/**
+	 * This is the constructor for a transaction
+	 * 
+	 * @param type	the type of the transaction(in this case WITHDRAWAL or DEPOSIT)
+	 * @param value	how much money for the transaction
+	 * @param accountBalance	the current balance when the transaction was made
+	 * @param threadId	the Id of the thread responsible for the transaction
+	 * 
+	 */
+	public Transaction(int type, int value, int accountBalance, long threadId)
+	{
+		this.type = type;
+		this.value = value;
+		this.accountBalance = accountBalance;
+		this.threadId = threadId;
+	}
+	
+	public int getType()
+	{return type;}
+	
+	public int getValue()
+	{return value;}
+	
+	public int getAccountBalance()
+	{return accountBalance;}
+	
+	public long getThreadId()
+	{return threadId;}
+	
+}
+
+
+/**
+ * This is the class that manages a single card and using a thread
+ * 
+ * @author Alfonso Leone
+ * @version 1.0
+ *
+ */
+class CardThread extends Thread
+{
+	BankAccount account;
+	int localBalance = 0;
+	
+	
+	/**
+	 * A constructor for a new card thread
+	 * 
+	 * @param account	takes in an existing account in which to make transactions
+	 */
+	public CardThread(BankAccount account) 
+	{
+		this.account = account;
+	}
+
+	/**
+	 * This is an overriding of the run method from the Tread class.
+	 * In this method there is the critical section which can be accessed only
+	 * from one thread at time using the synchronized method that takes
+	 * an account as a monitor in order to keep the account balance reliable.
+	 * At the end of the 20 random transactions this thread will print out
+	 * its local balance.
+	 * 
+	 */
+	public void run() 
+	{
+		for (int i = 0; i < 20; i++)
+		{
+			int value = (int) (Math.random() * 10);
+			if (Math.random() > 0.5) 
+			{
+				synchronized (account) {
+					account.withdraw(value);
+					account.addTransaction(Transaction.WITHDRAWAL, value, getId());
+					this.localBalance = this.localBalance + value;				
+				}
+			}
+
+			else {
+				synchronized (account) {					
+					account.deposit(value);
+					account.addTransaction(Transaction.DEPOSIT, value, getId());
+					this.localBalance = this.localBalance - value;					
+				}
+
+			}
+
+			try {
+				sleep(200);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
+
+		} // end of for
+		System.out.println("THREAD " + (getId()-9) + " local balance: " + localBalance);
+
+	} // end of run()
+
+} // end of CardThread class
+
+
+/**
+ * This class contains the main method
+ * 
+ * @author Alfonso Leone
+ * @version 1.0
+ */
+public class MyAccount
+{
+	/**
+	 * After validating the input from the user this main method creates the number of threads 
+	 * specified from the user and links them with the same account. Then the threads all start calling the start method
+	 * and finally after called the join method to allow all the threads to finish their operations
+	 * the program prints out the a list of all the stored transaction.
+	 * 
+	 * @param args	It takes only two integer numbers. the first one is the number of cards sharing the account and the second one is the initial account balance
+	 *
+	 */
+	public static void main(String[] args) {
+		
+		if (args.length != 2) 
+		{
+			System.err.println("Please enter only a balance and the number of cards !");
+			System.exit(0);
+		}
+
+		int accountBalance = 0;
+		int howManyAccounts = 0;
+		
+		try {
+			howManyAccounts = Integer.parseInt(args[0]);
+			accountBalance = Integer.parseInt(args[1]);			
+		} catch (NumberFormatException e) {
+			
+			System.err.println("Enter only integer numbers please !");
+			System.exit(0);
+		}
+	
+		BankAccount account = new BankAccount(accountBalance);
+		CardThread[] cardsArray = new CardThread[howManyAccounts];
+
+		for (int i = 0; i < cardsArray.length; i++)
+		{
+			cardsArray[i] = new CardThread(account);
+		}
+
+		for (int i = 0; i < cardsArray.length; i++)
+		{
+			cardsArray[i].start();
+		}
+		
+		for (CardThread card: cardsArray)
+		{
+			try {
+				card.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println("");
+		System.out.println("COMPLETE !!"); 
+		System.out.println(" ");
+		account.printTransactions();
+		
+
+	} // end of main
+
+}

@@ -1,0 +1,14 @@
+package week3;
+
+public class ControllerEx2 {
+
+	public static void main(String[] args)
+	{
+		Person newPerson = new Person("jack", "123 Manchester", 725272, "jake@gmail.com");
+		System.out.println(newPerson.toString());
+		
+		Employee empl1 = new Employee("")
+		
+	}
+
+}

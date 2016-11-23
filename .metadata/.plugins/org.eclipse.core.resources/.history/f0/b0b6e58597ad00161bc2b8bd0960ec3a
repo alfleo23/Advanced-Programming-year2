@@ -1,0 +1,189 @@
+import java.util.ArrayList;
+
+class BankAccount 
+{
+	ArrayList<Transaction> transactions;
+	int balance;
+
+	public BankAccount(int aBalance)
+	{
+		this.balance = aBalance;
+		transactions = new ArrayList<Transaction>();
+	}
+
+	public int getBalance() {
+		return balance;
+	}
+
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}
+
+	public void withdraw(int amount) {
+		balance = balance - amount;
+	}
+
+	public void deposit(int amount) {
+		balance = balance + amount;
+	}
+	
+	public void addTransaction(int type, int value, long threadId)
+	{
+		transactions.add(new Transaction(type, value, balance, threadId));
+	}
+	
+	public void printTransactions()
+	{
+		System.out.println("Transaction" + "\t" + "Withdrawal" + "\t" + "Deposit" + "\t\t" + "Balance");
+		System.out.println("");
+		
+		for(int i = 0; i < transactions.size(); i++)
+		{
+			Transaction t = transactions.get(i);
+			if(t.getType() == Transaction.WITHDRAWAL) 
+			{
+				//TODO print on withdrawal column
+				System.out.print(i+1 + " ");
+				System.out.println("("+(t.getThreadId()-9)+")" + "\t\t" + t.getValue() + "\t\t" + "" + "\t\t" + t.getAccountBalance());
+			}
+			else
+			{
+				//TODO print on deposit column
+				System.out.print(i+1 + " ");
+				System.out.println("("+(t.getThreadId()-9)+")" + "\t\t" + "" + "\t\t" + t.getValue()  + "\t\t" + t.getAccountBalance());
+			}
+		}
+		
+	}
+
+}
+
+class Transaction
+{
+	public static final int WITHDRAWAL = 0;
+	public static final int DEPOSIT = 1;
+	
+	int type, value, accountBalance;
+	long threadId;
+	
+	public Transaction(int type, int value, int accountBalance, long threadId)
+	{
+		this.type = type;
+		this.value = value;
+		this.accountBalance = accountBalance;
+		this.threadId = threadId;
+	}
+	
+	public int getType()
+	{return type;}
+	
+	public int getValue()
+	{return value;}
+	
+	public int getAccountBalance()
+	{return accountBalance;}
+	
+	public long getThreadId()
+	{return threadId;}
+	
+}
+
+class CardThread extends Thread
+{
+	BankAccount account;
+	int netBalance = 0;
+	
+	public CardThread(BankAccount account) 
+	{
+		this.account = account;
+	}
+
+	public void run() 
+	{
+		for (int i = 0; i < 20; i++)
+		{
+			int value = (int) (Math.random() * 10);
+			if (Math.random() > 0.5) 
+			{
+				synchronized (account) {
+					account.withdraw(value);
+					account.addTransaction(Transaction.WITHDRAWAL, value, getId());
+					this.netBalance = this.netBalance + value;				
+				}
+			}
+
+			else {
+				synchronized (account) {					
+					account.deposit(value);
+					account.addTransaction(Transaction.DEPOSIT, value, getId());
+					this.netBalance = this.netBalance - value;					
+				}
+
+			}
+
+			try {
+				sleep(200);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
+
+		} // end of for
+		System.out.println("THREAD " + (getId()-9) + " net balance: " + netBalance);
+
+	} // end of run()
+
+} // end of CardThread class
+
+public class MyAccount
+{
+	public static void main(String[] args) {
+		
+		if (args.length != 2) 
+		{
+			System.err.println("Please enter only a balance and the number of cards ");
+			System.exit(0);
+		}
+
+		int accountBalance = 0;
+		int howManyAccounts = 0;
+		
+		try {
+			howManyAccounts = Integer.parseInt(args[0]);
+			accountBalance = Integer.parseInt(args[1]);			
+		} catch (NumberFormatException e) {
+			
+			System.err.println("enter only integer numbers please");
+		}
+	
+		BankAccount account = new BankAccount(accountBalance);
+		CardThread[] cardsArray = new CardThread[howManyAccounts];
+
+		for (int i = 0; i < cardsArray.length; i++)
+		{
+			cardsArray[i] = new CardThread(account);
+		}
+
+		for (int i = 0; i < cardsArray.length; i++)
+		{
+			cardsArray[i].start();
+		}
+		
+		for (CardThread card: cardsArray)
+		{
+			try {
+				card.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println("");
+		System.out.println("COMPLETE !!"); 
+		System.out.println(" ");
+		account.printTransactions();
+		
+
+	} // end of main
+
+}
