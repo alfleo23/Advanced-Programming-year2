@@ -1,0 +1,75 @@
+package week9;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+import javax.swing.*;
+
+public class ex4 extends JFrame 
+{
+	JPanel panel;
+	JLabel label;
+	
+	public ex4()
+	{
+		super("Mouse events example");
+		
+		panel = new JPanel();
+		label = new JLabel(" ");
+		panel.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				label.setText("mouse released");
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				label.setText("mouse pressed");
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				label.setText("mouse exited");
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				label.setText("mouse entered");
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				label.setText("mouse clicked you dickhead");
+				
+			}
+		});;
+		
+		
+		panel.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				label.setText("you are moving the mouse you genius");
+				
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				label.setText("you are dragging ing ing ing");
+				
+			}
+		});
+		
+		
+		add(panel, BorderLayout.CENTER);
+		add(label, BorderLayout.SOUTH);
+	}
+
+}

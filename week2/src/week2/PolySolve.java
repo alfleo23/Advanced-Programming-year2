@@ -13,20 +13,20 @@ public class PolySolve {
 		this.c = c;
 	}
 	
-	public static void display(PolySolve any)
+	public void display()
 	{
-		if (any.a == 0)
+		if (a == 0)
 		{
-			double result = aIsZero(any.b, any.c);
-			System.out.println("the polynome is " + (int) any.b + "x + " + (int) any.c + " = 0");
+			double result = aIsZero(b, c);
+			System.out.println("the polynome is " + (int) b + "x + " + (int) c + " = 0");
 			System.out.println("");
 			System.out.println("x = " + result);
 		}
 		else
 		{
-			double x1 = positiveRootFinder(any.a, any.b, any.c);
-			double x2 = negativeRootFinder(any.a, any.b, any.c);
-			System.out.println("the polynome is " + (int) any.a + "x² + " + (int) any.b + "x + " + (int) any.c + " = 0");
+			double x1 = positiveRootFinder(a, b, c);
+			double x2 = negativeRootFinder(a, b, c);
+			System.out.println("the polynome is " + (int) a + "x² + " + (int) b + "x + " + (int) c + " = 0");
 			System.out.println("");
 			System.out.println("x1 is: " + x1);
 			System.out.println("x2 is: " + x2);

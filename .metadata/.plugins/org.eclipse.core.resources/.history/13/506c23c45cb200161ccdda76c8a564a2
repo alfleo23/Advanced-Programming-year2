@@ -1,0 +1,21 @@
+package week9;
+
+import java.awt.*;
+import javax.swing.*;
+
+public class ex1 extends JFrame
+{
+	super("Flow layout manager");
+	
+	JButton b1 = new JButton("button1");
+	JButton b2 = new JButton("button2");
+	JButton b3 = new JButton("button3");
+	JButton b4 = new JButton("button4");
+	JButton b5 = new JButton("button5");
+	JButton b6 = new JButton("button6");
+	
+	this.setLayout(new FlowLayout());
+	
+	
+
+}
