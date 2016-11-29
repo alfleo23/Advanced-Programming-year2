@@ -1,5 +1,10 @@
 package adv_progr_assignment;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+
 
 public class Person 
 {
@@ -9,6 +14,7 @@ public class Person
 	private String dob;
 	private String Address;
 	private String Postcode;
+	private ImageIcon employeeImage;
 	
 	public Person(String name, char gender, String nin, String dob, String address, String postcode)
 	{
@@ -17,8 +23,26 @@ public class Person
 		this.natInsNo = nin;
 		this.dob = dob;
 		this.Address = address;
+		this.Postcode = postcode;	
+	}
+	
+	public Person(String name, char gender, String nin, String dob, String address, String postcode, ImageIcon anImage)
+	{
+		this.name = name;
+		this.gender = gender;
+		this.natInsNo = nin;
+		this.dob = dob;
+		this.Address = address;
 		this.Postcode = postcode;
-		
+		this.employeeImage = anImage;
+	}
+
+	public ImageIcon getEmployeeImage() {
+		return employeeImage;
+	}
+
+	public void setEmployeeImage(ImageIcon employeeImage) {
+		this.employeeImage = employeeImage;
 	}
 
 	public String getName() {

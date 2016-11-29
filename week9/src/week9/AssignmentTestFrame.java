@@ -1,51 +1,37 @@
-package adv_progr_assignment;
+package week9;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.sql.SQLException;
 import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class MainForm extends JFrame
+public class AssignmentTestFrame extends JFrame
 {
-	EmployeeDAO dao = new EmployeeDAO();
-	
 	JLabel namelabel, genderlabel, doblabel, salarylabel, ninlabel, emaillabel, sdatelabel, joblabel, noemployeelabel, imagelabel, malelabel, femalelabel;
 	JTextField namefield, salaryfield, ninfield, emailfield, jobfield;
 	JPanel genderpanel, dobpanel, startdatepanel, backforwardpanel;
 	JButton enterbutton, clearbutton, backbutton, forwardbutton;
 	JCheckBox malecheck, femalecheck;
-	JComboBox dobday, dobmonth, dobyear, stdateday, stdatemonth, stdateyear; 
-	
-	int employeeIndex = 0;
-	ArrayList<Employee> employeesList = dao.selectAllEmployees();  //selects all the employees in the database, put them in an arraylist and return it with the selectAllEmployees method
-	Employee empToShow = employeesList.get(employeeIndex);
-
+	JComboBox dobday, dobmonth, dobyear, stdateday, stdatemonth, stdayyear; 
 	
 	//test 3 panels
 	JPanel west,center,east;
 	
-	public MainForm() throws IOException, SQLException
+	public AssignmentTestFrame() throws IOException
 	{
-		super("Employee Record System Assignment");
+		super("test frame");
 		Integer[] days = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31};
 		Integer[] months = {1,2,3,4,5,6,7,8,9,10,11,12};
 		Integer[] years = new Integer[67];
-		
 		int yearToAdd = 1950;
-		
-		
 		for (int i = 0; i < 67; i++)
 		{
 			years[i] = yearToAdd;
 			yearToAdd++;
 		}
-		
 		
 		
 		namelabel = new JLabel("Name:");
@@ -60,11 +46,11 @@ public class MainForm extends JFrame
 		malelabel = new JLabel("Male ");
 		femalelabel = new JLabel("Female ");
 		
-		namefield = new JTextField(empToShow.getName());
-		salaryfield = new JTextField(empToShow.getSalary());
-		ninfield = new JTextField(empToShow.getNatInsNo());
-		emailfield = new JTextField(empToShow.getEmail());
-		jobfield = new JTextField(empToShow.getJobTitle());
+		namefield = new JTextField();
+		salaryfield = new JTextField();
+		ninfield = new JTextField();
+		emailfield = new JTextField();
+		jobfield = new JTextField();
 		
 		genderpanel = new JPanel();
 		dobpanel = new JPanel();
@@ -74,22 +60,7 @@ public class MainForm extends JFrame
 		enterbutton = new JButton("Enter");
 		clearbutton = new JButton("Clear");
 		backbutton = new JButton("Back");
-		backbutton.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				getPreviousEmployee();
-				
-			}
-		});
 		forwardbutton = new JButton("Forward");
-		forwardbutton.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				getNextEmployee();
-			}
-		});
 		
 		malecheck = new JCheckBox();
 		femalecheck = new JCheckBox();
@@ -97,9 +68,6 @@ public class MainForm extends JFrame
 		dobday = new JComboBox(days);
 		dobmonth = new JComboBox(months);
 		dobyear = new JComboBox(years);
-		stdateday = new JComboBox(days);
-		stdatemonth = new JComboBox(months);
-		stdateyear = new JComboBox(years);
 		
 		
 		//test 3 main panels
@@ -108,7 +76,7 @@ public class MainForm extends JFrame
 		east = new JPanel();
 		
 		
-		ImageIcon image = empToShow.getEmployeeImage();
+		ImageIcon image = new ImageIcon("provetta.jpg");
 		Image img = image.getImage();
 		Image newimg = img.getScaledInstance(150, 250, java.awt.Image.SCALE_SMOOTH);
 		image = new ImageIcon(newimg);
@@ -152,10 +120,6 @@ public class MainForm extends JFrame
 		center.add(emailfield);
 		
 		center.add(startdatepanel);
-		startdatepanel.add(stdateday);
-		startdatepanel.add(stdatemonth);
-		startdatepanel.add(stdateyear);
-		
 		center.add(jobfield);
 		center.add(clearbutton);
 		
@@ -167,49 +131,7 @@ public class MainForm extends JFrame
 		
 	}
 	
-	public void getNextEmployee()
-	{
-		if (employeeIndex < employeesList.size()-1)
-		{
-			employeeIndex++;
-			empToShow = employeesList.get(employeeIndex);
-			
-			namefield.setText(empToShow.getName());
-			salaryfield.setText(empToShow.getSalary());
-			ninfield.setText(empToShow.getNatInsNo());
-			emailfield.setText(empToShow.getEmail());
-			jobfield.setText(empToShow.getJobTitle());
-			ImageIcon image = empToShow.getEmployeeImage();
-			Image img = image.getImage();
-			Image newimg = img.getScaledInstance(150, 250, java.awt.Image.SCALE_SMOOTH);
-			image = new ImageIcon(newimg);
-			imagelabel.setIcon(image);
-		}
-		
-	}
-	
-	public void getPreviousEmployee()
-	{
-		if (employeeIndex > 0)
-		{
-			employeeIndex--;
-			empToShow = employeesList.get(employeeIndex);
-			
-			namefield.setText(empToShow.getName());
-			salaryfield.setText(empToShow.getSalary());
-			ninfield.setText(empToShow.getNatInsNo());
-			emailfield.setText(empToShow.getEmail());
-			jobfield.setText(empToShow.getJobTitle());
-			
-			ImageIcon image = empToShow.getEmployeeImage();
-			Image img = image.getImage();
-			Image newimg = img.getScaledInstance(150, 250, java.awt.Image.SCALE_SMOOTH);
-			image = new ImageIcon(newimg);
-			imagelabel.setIcon(image);
-		}		
-		
-	}
-	
-	
 
-} // end of main form
+	
+	
+}

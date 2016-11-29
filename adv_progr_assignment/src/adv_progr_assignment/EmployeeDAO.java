@@ -1,11 +1,17 @@
 package adv_progr_assignment;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 
 public class EmployeeDAO {
 	
@@ -30,7 +36,9 @@ public class EmployeeDAO {
 		return dbConnection;
 	}
 
-	public static void selectAllEmployees() throws SQLException {
+	public ArrayList<Employee> selectAllEmployees() throws SQLException {
+		ArrayList<Employee> employees = new ArrayList<Employee>();
+		
 		String query = "SELECT * FROM employees;";
 		try {
 			connection = getDBConnection();
@@ -38,11 +46,21 @@ public class EmployeeDAO {
 			System.out.println(query);
 			resultset = statement.executeQuery(query);
 			while (resultset.next()) {
-				System.out.print(resultset.getString("ID") + "\t");
-				System.out.print(resultset.getString("name") + "\t");
-				System.out.print(resultset.getString("address") + "\t");
-				System.out.println(resultset.getString("postcode") + "\t");
-				
+				int id = resultset.getInt("ID");
+				String name = resultset.getString("Name");
+				char gender = resultset.getString("Gender").charAt(0);
+				String dob = resultset.getString("DOB");
+				String address = resultset.getString("Address");
+				String postcode = resultset.getString("Postcode");
+				String nin = resultset.getString("NIN");
+				String jobTitle = resultset.getString("JobTitle");
+				String startDate = resultset.getString("StartDate");
+				String salary = resultset.getString("Salary");
+				String email = resultset.getString("Email");
+				ImageIcon image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(resultset.getBytes("Image")));
+				Employee emp = new Employee(id, name, gender, nin, dob, address, postcode, salary, startDate, jobTitle, email, image);
+				employees.add(emp);
+				System.out.println("added");
 			}
 			System.out.println(" ");
 		} catch (SQLException e) {
@@ -58,6 +76,7 @@ public class EmployeeDAO {
 				connection.close();
 			}
 		}
+		return employees;
 	}
 
 	public static void selectEmployeeByName(String aName) throws SQLException {
@@ -94,14 +113,14 @@ public class EmployeeDAO {
 	public static void insertEmployee(Employee anEmployee)
 	{
 		try {
-			String id = anEmployee.getId();
+			int id = anEmployee.getId();
 			String name = anEmployee.getName();
 			char gender = anEmployee.getGender();
 			String dob = anEmployee.getDob();
 			String address = anEmployee.getAddress();
 			String postcode = anEmployee.getPostcode();
 			String nin = anEmployee.getNatInsNo();
-			String jobTitle = anEmployee.getTitle();
+			String jobTitle = anEmployee.getJobTitle();
 			String startDate = anEmployee.getStartDate();
 			String salary = anEmployee.getSalary();
 			String email = anEmployee.getEmail();
