@@ -37,6 +37,7 @@ public class EmployeeDAO {
 	}
 
 	public ArrayList<Employee> selectAllEmployees() throws SQLException {
+
 		ArrayList<Employee> employees = new ArrayList<Employee>();
 		
 		String query = "SELECT * FROM employees;";

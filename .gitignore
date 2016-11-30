@@ -1,5 +1,7 @@
+*.iml
 .metadata/*
 RemoteSystemsTempFiles/*
+*/.idea/
 */.settings/
 */.classpath
 */.project
