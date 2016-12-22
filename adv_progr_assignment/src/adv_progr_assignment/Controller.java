@@ -10,12 +10,12 @@ public class Controller {
 
 	public static void main(String[] args) throws SQLException
 	{
-		//EmployeeDAO newInterface = new EmployeeDAO();
+//		EmployeeDAO newInterface = new EmployeeDAO();
 //		EmployeeDAO.selectAllEmployees();
-	//	EmployeeDAO.selectEmployeeByName("andrew pollit");
+//		EmployeeDAO.selectEmployeeByName("andrew pollit");
 //		Employee emp1 = new Employee("3", "Jim Smith", 'M', "RS501TR345", "12/04/1982", "2 ossory street", "M127TY", "25000", "25/07/2014", "Technician", "jimsmith@gmail.com");
 //		EmployeeDAO.insertEmployee(emp1);
-		//EmployeeDAO.selectAllEmployees();
+//		EmployeeDAO.selectAllEmployees();
 		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() 
 		{
@@ -27,12 +27,13 @@ public class Controller {
 					
 					e.printStackTrace();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 				f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				f.setSize(700, 700);
 				f.setVisible(true);
+				//f.setResizable(false);
 				
 			}
 		});

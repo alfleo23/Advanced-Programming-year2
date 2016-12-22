@@ -7,3 +7,4 @@ RemoteSystemsTempFiles/*
 */.project
 *.class
 */bin/
+*.zip

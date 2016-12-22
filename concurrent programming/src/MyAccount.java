@@ -20,7 +20,7 @@ public class MyAccount
 		
 		if (args.length != 2) 
 		{
-			System.err.println("Please enter only a balance and the number of cards !");
+			System.err.println("Please enter only the number of cards and the initial balance !");
 			System.exit(0);
 		}
 

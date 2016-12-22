@@ -15,7 +15,10 @@ public class Person
 	private String Address;
 	private String Postcode;
 	private ImageIcon employeeImage;
-	
+
+	public Person()
+	{}
+
 	public Person(String name, char gender, String nin, String dob, String address, String postcode)
 	{
 		this.name = name;
@@ -92,7 +95,7 @@ public class Person
 	public void setPostcode(String postcode) {
 		Postcode = postcode;
 	}
-	
+
 	//Test
 	
 	

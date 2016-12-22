@@ -13,20 +13,25 @@ public class Employee extends Person
 	private String title;
 	private String email;
 	
-	public Employee(int id, String name, char gender, String nin, String dob, String address, String postcode, String salary, String startdate, String title, String email)
+	public Employee(String name, char gender, String nin, String dob, String address, String postcode, String salary, String startdate, String title, String email)
 	{
 		super(name, gender, nin, dob,address,postcode);
-		this.id = id;
+		//this.id = id;
 		this.salary = salary;
 		this.startDate = startdate;
 		this.title = title;
 		this.email = email;
 	}
-	
-	public Employee(int id, String name, char gender, String nin, String dob, String address, String postcode, String salary, String startdate, String title, String email, ImageIcon anImage)
+
+	public Employee()
+	{
+		super();
+	}
+
+	public Employee(String name, char gender, String nin, String dob, String address, String postcode, String salary, String startdate, String title, String email, ImageIcon anImage)
 	{
 		super(name, gender, nin, dob, address, postcode, anImage);
-		this.id = id;
+		//this.id = id;
 		this.salary = salary;
 		this.startDate = startdate;
 		this.title = title;

@@ -3,12 +3,7 @@ package adv_progr_assignment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -47,22 +42,28 @@ public class EmployeeDAO {
 			System.out.println(query);
 			resultset = statement.executeQuery(query);
 			while (resultset.next()) {
-				int id = resultset.getInt("ID");
-				String name = resultset.getString("Name");
-				char gender = resultset.getString("Gender").charAt(0);
-				String dob = resultset.getString("DOB");
-				String address = resultset.getString("Address");
-				String postcode = resultset.getString("Postcode");
-				String nin = resultset.getString("NIN");
-				String jobTitle = resultset.getString("JobTitle");
-				String startDate = resultset.getString("StartDate");
-				String salary = resultset.getString("Salary");
-				String email = resultset.getString("Email");
-				ImageIcon image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(resultset.getBytes("Image")));
-				Employee emp = new Employee(id, name, gender, nin, dob, address, postcode, salary, startDate, jobTitle, email, image);
+
+				Employee emp = new Employee();
+				emp.setId(resultset.getInt("ID"));
+				emp.setName(resultset.getString("Name"));
+				emp.setGender(resultset.getString("Gender").charAt(0));
+				emp.setDob(resultset.getString("DOB"));
+				emp.setAddress(resultset.getString("Address"));
+				emp.setPostcode(resultset.getString("Postcode"));
+				emp.setNatInsNo(resultset.getString("NIN"));
+				emp.setJobTitle(resultset.getString("JobTitle"));
+				emp.setStartDate(resultset.getString("StartDate"));
+				emp.setSalary(resultset.getString("Salary"));
+				emp.setEmail(resultset.getString("Email"));
+				try {
+					emp.setEmployeeImage(new ImageIcon(Toolkit.getDefaultToolkit().createImage(resultset.getBytes("Image"))));
+				}
+				catch (NullPointerException e){}
 				employees.add(emp);
 				System.out.println("added");
 			}
+
+
 			System.out.println(" ");
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -78,6 +79,49 @@ public class EmployeeDAO {
 			}
 		}
 		return employees;
+	}
+
+	public static void insertEmployee(Employee anEmployee)
+	{
+		try {
+			//int id = anEmployee.getId();
+			String name = anEmployee.getName();
+			char gender = anEmployee.getGender();
+			String dob = anEmployee.getDob();
+			String address = anEmployee.getAddress();
+			String postcode = anEmployee.getPostcode();
+			String nin = anEmployee.getNatInsNo();
+			String jobTitle = anEmployee.getJobTitle();
+			String startDate = anEmployee.getStartDate();
+			String salary = anEmployee.getSalary();
+			String email = anEmployee.getEmail();
+
+			Class.forName("org.sqlite.JDBC");
+			connection = getDBConnection();
+			connection.setAutoCommit(false);
+			System.out.println("Insert operation -database successfully opened");
+			PreparedStatement s;
+			s = connection.prepareStatement("INSERT INTO employees (Name,Gender,Dob,Address,Postcode,NIN,JobTitle,StartDate,Salary,Email) VALUES (?,?,?,?,?,?,?,?,?,?)");
+			s.setString(1, name);
+			s.setString(2, String.valueOf(gender));
+			s.setString(3, dob);
+			s.setString(4, address);
+			s.setString(5, postcode);
+			s.setString(6, nin);
+			s.setString(7, jobTitle);
+			s.setString(8, startDate);
+			s.setString(9, salary);
+			s.setString(10, email);
+			s.execute();
+			s.close();
+			connection.commit();
+			connection.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+		System.out.println("Records successfully created");
+		System.out.println("");
 	}
 
 	public static void selectEmployeeByName(String aName) throws SQLException {
@@ -107,14 +151,13 @@ public class EmployeeDAO {
 			}
 			System.out.println("");
 		}
-		
+
 	}
-	
-	
-	public static void insertEmployee(Employee anEmployee)
+
+
+	public static void insertEmployeeAtID(Employee anEmployee, String anID)
 	{
 		try {
-			int id = anEmployee.getId();
 			String name = anEmployee.getName();
 			char gender = anEmployee.getGender();
 			String dob = anEmployee.getDob();
@@ -125,66 +168,22 @@ public class EmployeeDAO {
 			String startDate = anEmployee.getStartDate();
 			String salary = anEmployee.getSalary();
 			String email = anEmployee.getEmail();
-			
+
 			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager
-					.getConnection("jdbc:sqlite:empdb.sqlite");
+			Class.forName("org.sqlite.JDBC");
+			connection = getDBConnection();
 			connection.setAutoCommit(false);
-			System.out
-					.println("Insert operation -database successfully opened");
-			statement = connection.createStatement();
-			String sql = "INSERT INTO employees (ID,Name,Gender,Dob,Address,Postcode,NIN,JobTitle,StartDate,Salary,Email)"
-					+ "VALUES ('"+id+"','"+name+"','"+gender+"','"+dob+"',"
-							+ "'"+address+"','"+postcode+"','"+nin+"','"+jobTitle+"',"
-									+ "'"+startDate+"','"+salary+"','"+email+"');";
-			statement.executeUpdate(sql);
-			statement.close();
-			connection.commit();
-			connection.close();
+			System.out.println("Update operation -database successfully opened");
+			PreparedStatement s;
+
+
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Records successfully created");
+		System.out.println("Records successfully updated");
 		System.out.println("");
 	}
-	
-	
-//	public static void insertEmployeeAtID(Employee anEmployee, String anID)
-//	{
-//		try {
-//			String id = anEmployee.getId();
-//			String name = anEmployee.getName();
-//			char gender = anEmployee.getGender();
-//			String dob = anEmployee.getDob();
-//			String address = anEmployee.getAddress();
-//			String postcode = anEmployee.getPostcode();
-//			String nin = anEmployee.getNatInsNo();
-//			String jobTitle = anEmployee.getTitle();
-//			String startDate = anEmployee.getStartDate();
-//			String salary = anEmployee.getSalary();
-//			String email = anEmployee.getEmail();
-//			
-//			Class.forName("org.sqlite.JDBC");
-//			connection = DriverManager
-//					.getConnection("jdbc:sqlite:empdb.sqlite");
-//			connection.setAutoCommit(false);
-//			System.out
-//					.println("Insert operation -database successfully opened");
-//			statement = connection.createStatement();
-//			String sql = "UPDATE employees SET Name = '"+name+"', 
-//					
-//			statement.executeUpdate(sql);
-//			statement.close();
-//			connection.commit();
-//			connection.close();
-//		} catch (Exception e) {
-//			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-//			System.exit(0);
-//		}
-//		System.out.println("Records successfully created");
-//		System.out.println("");
-//	}
 
 	
 	
