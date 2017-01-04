@@ -124,18 +124,27 @@ public class EmployeeDAO {
 		System.out.println("");
 	}
 
-	public static void selectEmployeeByName(String aName) throws SQLException {
-		String query = "SELECT * FROM employees WHERE Name = '"+aName+"'; ";
+	public String selectEmployeeByName(String aName) throws SQLException {
+		String query = "SELECT * FROM employees WHERE Name = '" + aName + "'; ";
+		String result = null;
 		try {
 			connection = getDBConnection();
 			statement = connection.createStatement();
 			System.out.println(query);
 			resultset = statement.executeQuery(query);
 			while (resultset.next()) {
-				System.out.print(resultset.getString("ID") + "\t");
-				System.out.print(resultset.getString("name") + "\t");
-				System.out.print(resultset.getString("address") + "\t");
-				System.out.println(resultset.getString("postcode") + "\t");
+				String id = Integer.toString(resultset.getInt("ID"));
+				String name = resultset.getString("Name");
+				String gender = Character.toString(resultset.getString("Gender").charAt(0));
+				String dob = resultset.getString("DOB");
+				String address = resultset.getString("Address");
+				String postcode = resultset.getString("Postcode");
+				String nin = resultset.getString("NIN");
+				String jobtitle = resultset.getString("JobTitle");
+				String startdate = resultset.getString("StartDate");
+				String salary = resultset.getString("Salary");
+				String email = resultset.getString("Email");
+				result = id + "-" + name + "-" + gender + "-" + dob + "-" + address + "-" + postcode + "-" + nin + "-" + jobtitle + "-" + startdate + "-" + salary + "-" + email;
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -151,6 +160,7 @@ public class EmployeeDAO {
 			}
 			System.out.println("");
 		}
+		return result;
 
 	}
 
@@ -183,6 +193,33 @@ public class EmployeeDAO {
 		}
 		System.out.println("Records successfully updated");
 		System.out.println("");
+	}
+
+	public static boolean deleteEmployeeById(String id)
+	{
+		try
+		{
+			Class.forName("org.sqlite.JDBC");
+			connection = getDBConnection();
+			connection.setAutoCommit(false);
+			System.out.println("Insert operation -database successfully opened");
+			PreparedStatement s;
+			s = connection.prepareStatement("DELETE FROM employees WHERE ID = ?");
+			s.setString(1, id);
+			s.executeUpdate();
+			s.close();
+			connection.commit();
+			connection.close();
+
+			return true;
+
+		}
+		catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+
+
 	}
 
 	
