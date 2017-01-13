@@ -1,4 +1,14 @@
 package adv_progr_assignment;
+// Alfonso Leone 15002679
+
+/**
+ * This is the controller class in which a new instance of MainForm is built and run
+ * within the main method
+ *
+ * @author Alfonso Leone
+ * @version 1.0
+ *
+ */
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -7,16 +17,15 @@ import javax.swing.JFrame;
 
 
 public class Controller {
+	/**
+	 * main method
+	 * @param args
+	 * @throws SQLException
+	 */
 
 	public static void main(String[] args) throws SQLException
 	{
-//		EmployeeDAO newInterface = new EmployeeDAO();
-//		EmployeeDAO.selectAllEmployees();
-//		EmployeeDAO.selectEmployeeByName("andrew pollit");
-//		Employee emp1 = new Employee("3", "Jim Smith", 'M', "RS501TR345", "12/04/1982", "2 ossory street", "M127TY", "25000", "25/07/2014", "Technician", "jimsmith@gmail.com");
-//		EmployeeDAO.insertEmployee(emp1);
-//		EmployeeDAO.selectAllEmployees();
-		
+
 		javax.swing.SwingUtilities.invokeLater(new Runnable() 
 		{
 			public void run() {

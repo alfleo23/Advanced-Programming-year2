@@ -1,4 +1,13 @@
 package adv_progr_assignment;
+// Alfonso Leone 15002679
+
+/**
+ * The EmployeeDAO class is the data access object (DAO) that provides an
+ * interface to the SQLite database
+ *
+ * @author Alfonso Leone
+ * @version 1.0
+ */
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -14,6 +23,10 @@ public class EmployeeDAO {
 	static Statement statement = null;
 	static ResultSet resultset = null;
 
+	/**
+	 * gets the connection from the database
+	 * @return a connection from the database
+	 */
 	private static Connection getDBConnection() {
 		Connection dbConnection = null;
 		try {
@@ -31,7 +44,13 @@ public class EmployeeDAO {
 		return dbConnection;
 	}
 
-	public ArrayList<Employee> selectAllEmployees() throws SQLException {
+	/**
+	 * Selects all the employees in the database and returns an Employee list with all the employees
+	 * @return an ArrayList of Employee instances
+	 * @throws SQLException
+	 */
+	public ArrayList<Employee> selectAllEmployees() throws SQLException
+	{
 
 		ArrayList<Employee> employees = new ArrayList<Employee>();
 		
@@ -81,7 +100,12 @@ public class EmployeeDAO {
 		return employees;
 	}
 
-	public static void insertEmployee(Employee anEmployee)
+	/**
+	 * Inserts an employee in the database
+	 * @param anEmployee
+	 * @return true if the operation succeed, false otherwise
+	 */
+	public static boolean insertEmployee(Employee anEmployee)
 	{
 		try {
 			//int id = anEmployee.getId();
@@ -116,15 +140,25 @@ public class EmployeeDAO {
 			s.close();
 			connection.commit();
 			connection.close();
+			System.out.println("Records successfully created");
+			System.out.println("");
+			return true;
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
+			return false;
 		}
-		System.out.println("Records successfully created");
-		System.out.println("");
+
 	}
 
-	public String selectEmployeeByName(String aName) throws SQLException {
+	/**
+	 * Selects an employee from the database by name and returns a string with
+	 * all the employee information
+	 * @param aName
+	 * @return a string made of property separated by the character '-'
+	 * @throws SQLException
+	 */
+	public String selectEmployeeByName(String aName) throws SQLException
+	{
 		String query = "SELECT * FROM employees WHERE Name = '" + aName + "'; ";
 		String result = null;
 		try {
@@ -164,8 +198,50 @@ public class EmployeeDAO {
 
 	}
 
+	/**
+	 * Selects an employee image from the database. It has to be used with the method
+	 * selectEmployeeByName in order to get all the employee information and the image
+	 * @param aName
+	 * @return an employee image
+	 * @throws SQLException
+	 */
+	public ImageIcon selectEmployeeImageByName(String aName) throws SQLException
+	{
+		ImageIcon employeeImage =  null;
 
-	public static void insertEmployeeAtID(Employee anEmployee, String anID)
+		String query = "SELECT * FROM employees WHERE Name = '" + aName + "'; ";
+		try
+		{
+				connection = getDBConnection();
+				statement = connection.createStatement();
+				System.out.println(query);
+				resultset = statement.executeQuery(query);
+			while (resultset.next())
+			{
+				try
+				{
+					employeeImage = new ImageIcon(Toolkit.getDefaultToolkit().createImage(resultset.getBytes("Image")));
+				}
+				catch (NullPointerException e) {}
+			}
+
+			return employeeImage;
+		}
+		catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+
+		return employeeImage;
+
+	}
+
+	/**
+	 * Update the information of an employee at a given id
+	 * @param anEmployee
+	 * @param anID
+	 * @return true if the operation succeeds false otherwise
+	 */
+	public static boolean insertEmployeeAtID(Employee anEmployee, String anID)
 	{
 		try {
 			String name = anEmployee.getName();
@@ -180,21 +256,42 @@ public class EmployeeDAO {
 			String email = anEmployee.getEmail();
 
 			Class.forName("org.sqlite.JDBC");
-			Class.forName("org.sqlite.JDBC");
 			connection = getDBConnection();
 			connection.setAutoCommit(false);
 			System.out.println("Update operation -database successfully opened");
 			PreparedStatement s;
-
+			s = connection.prepareStatement("UPDATE employees SET Name = ?, Gender = ?, DOB = ?, Address = ?, Postcode = ?, NIN = ?, JobTitle = ?, StartDate = ?, Salary = ?, email = ? WHERE ID = ?");
+			s.setString(1, name);
+			s.setString(2, String.valueOf(gender));
+			s.setString(3, dob);
+			s.setString(4, address);
+			s.setString(5, postcode);
+			s.setString(6, nin);
+			s.setString(7, jobTitle);
+			s.setString(8, startDate);
+			s.setString(9, salary);
+			s.setString(10, email);
+			s.setString(11, anID);
+			s.executeUpdate();
+			s.close();
+			connection.commit();
+			connection.close();
+			System.out.println("Records successfully updated");
+			System.out.println("");
+			return true;
 
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
+			return false;
 		}
-		System.out.println("Records successfully updated");
-		System.out.println("");
+
 	}
 
+	/**
+	 * Deletes an employee at a specific given id
+	 * @param id
+	 * @return true if the operation succeeds false otherwise
+	 */
 	public static boolean deleteEmployeeById(String id)
 	{
 		try

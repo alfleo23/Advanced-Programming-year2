@@ -1,4 +1,11 @@
 package adv_progr_assignment;
+// Alfonso Leone 15002679
+
+/**
+ * This is the Mainform class containing all the swing components and their behaviour
+ * @author Alfonso Leone
+ * @version 1.0
+ */
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,15 +17,15 @@ import java.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+
 public class MainForm extends JFrame
 {
-	//test
 	EmployeeDAO dao = new EmployeeDAO();
 	
 	public JLabel namelabel, genderlabel, doblabel, salarylabel, ninlabel, emaillabel, sdatelabel, joblabel, noemployeelabel, imagelabel, malelabel, femalelabel, addresslabel, postcodelabel;
 	public JTextField namefield, salaryfield, ninfield, emailfield, jobfield, addressfield, postcodefield;
 	public JPanel genderpanel, dobpanel, startdatepanel, backforwardpanel, cleardeletepanel;
-	public JButton enterbutton, clearbutton, backbutton, forwardbutton, deletebutton;
+	public JButton enterbutton, clearbutton, backbutton, forwardbutton, deletebutton, updatebutton;
 	public ButtonGroup group;
 	public JRadioButton malecheck, femalecheck;
 	public JComboBox dobday, dobmonth, dobyear, stdateday, stdatemonth, stdateyear;
@@ -31,9 +38,14 @@ public class MainForm extends JFrame
 	ArrayList<Employee> employeesList = dao.selectAllEmployees();  //selects all the employees in the database, put them in an arraylist and return it with the selectAllEmployees method
 	Employee empToShow = employeesList.get(employeeIndex);
 
-	//test 3 panels
+
 	JPanel west,center,east;
-	
+
+	/**
+	 * MainForm constructor
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public MainForm() throws IOException, SQLException
 	{
 		super("Employee Record System Assignment");
@@ -59,6 +71,7 @@ public class MainForm extends JFrame
 				enterbutton.setVisible(true);
 				clearbutton.setVisible(true);
 				deletebutton.setVisible(false);
+				updatebutton.setVisible(false);
 				malecheck.setEnabled(true);
 				malecheck.setSelected(false);
 				femalecheck.setEnabled(true);
@@ -110,25 +123,12 @@ public class MainForm extends JFrame
 				enterbutton.setVisible(false);
 				clearbutton.setVisible(false);
 				deletebutton.setVisible(true);
-				malecheck.setEnabled(false);
-				femalecheck.setEnabled(false);
-				namefield.setEnabled(false);
-				addressfield.setEnabled(false);
-				postcodefield.setEnabled(false);
-				salaryfield.setEnabled(false);
-				ninfield.setEnabled(false);
-				emailfield.setEnabled(false);
-				jobfield.setEnabled(false);
+				updatebutton.setVisible(true);
 				noemployeelabel.setVisible(true);
 				forwardbutton.setVisible(true);
 				backbutton.setVisible(true);
-				dobday.setEnabled(false);
-				dobmonth.setEnabled(false);
-				dobyear.setEnabled(false);
-				stdateday.setEnabled(false);
-				stdatemonth.setEnabled(false);
-				stdateyear.setEnabled(false);
 				imagelabel.setVisible(true);
+				backforwardpanel.setVisible(true);
 			}
 		});
 
@@ -136,8 +136,19 @@ public class MainForm extends JFrame
 		searchEmployee.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SearchForm search = new SearchForm(MainForm.this);
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						SearchForm search = new SearchForm(MainForm.this);
+					}
+				});
 
+
+
+				updatebutton.setVisible(true);
+				backforwardpanel.setVisible(false);
+				enterbutton.setVisible(false);
+				clearbutton.setVisible(false);
 
 			}
 		});
@@ -164,19 +175,12 @@ public class MainForm extends JFrame
 		femalelabel = new JLabel("Female ");
 		
 		namefield = new JTextField(empToShow.getName());
-		namefield.setEnabled(false);
 		addressfield = new JTextField(empToShow.getAddress());
-		addressfield.setEnabled(false);
 		postcodefield = new JTextField(empToShow.getPostcode());
-		postcodefield.setEnabled(false);
 		salaryfield = new JTextField(empToShow.getSalary());
-		salaryfield.setEnabled(false);
 		ninfield = new JTextField(empToShow.getNatInsNo());
-		ninfield.setEnabled(false);
 		emailfield = new JTextField(empToShow.getEmail());
-		emailfield.setEnabled(false);
 		jobfield = new JTextField(empToShow.getJobTitle());
-		jobfield.setEnabled(false);
 		
 		genderpanel = new JPanel();
 		dobpanel = new JPanel();
@@ -190,19 +194,42 @@ public class MainForm extends JFrame
 		enterbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+
 				String name = namefield.getText();
 				char gender = getGenderBox();
-				String dob = getFormDOB();
+				String dob = null;
 				String address = addressfield.getText();
 				String postcode = postcodefield.getText();
 				String salary = salaryfield.getText();
 				String nin = ninfield.getText();
 				String jobtitle = jobfield.getText();
-				String stdate = getFormStartDate();
+				String stdate = null;
 				String email = emailfield.getText();
 
-				Employee testEmp = new Employee(name, gender, nin, dob, address, postcode, salary, stdate, jobtitle, email);
-				EmployeeDAO.insertEmployee(testEmp);
+				try
+				{
+					dob = getFormDOB();
+					stdate = getFormStartDate();
+				}
+				catch (NullPointerException ex){JOptionPane.showMessageDialog(null, "fill the date forms");}
+
+				try
+				{
+					if (compareFormDates(getFormDOB(), getFormStartDate()) == -1)
+					{
+						JOptionPane.showMessageDialog(null, "DOB greater than start date ! modify it");
+					}
+					else
+					{
+						Employee testEmp = new Employee(name, gender, nin, dob, address, postcode, salary, stdate, jobtitle, email);
+						EmployeeDAO.insertEmployee(testEmp);
+						JOptionPane.showMessageDialog(null, "Record successfully created");
+					}
+				}
+				catch (NullPointerException ex){}
+
+
 				//employeesList.add(testEmp);
 
 			}
@@ -224,6 +251,7 @@ public class MainForm extends JFrame
 				stdateday.setSelectedItem(null);
 				stdatemonth.setSelectedItem(null);
 				stdateyear.setSelectedItem(null);
+				group.clearSelection();
 
 			}
 		});
@@ -260,26 +288,12 @@ public class MainForm extends JFrame
 					enterbutton.setVisible(false);
 					clearbutton.setVisible(false);
 					deletebutton.setVisible(true);
-					malecheck.setEnabled(false);
-					femalecheck.setEnabled(false);
-					namefield.setEnabled(false);
-					addressfield.setEnabled(false);
-					postcodefield.setEnabled(false);
-					salaryfield.setEnabled(false);
-					ninfield.setEnabled(false);
-					emailfield.setEnabled(false);
-					jobfield.setEnabled(false);
 					noemployeelabel.setVisible(true);
 					forwardbutton.setVisible(true);
 					backbutton.setVisible(true);
-					dobday.setEnabled(false);
-					dobmonth.setEnabled(false);
-					dobyear.setEnabled(false);
-					stdateday.setEnabled(false);
-					stdatemonth.setEnabled(false);
-					stdateyear.setEnabled(false);
 					imagelabel.setVisible(true);
 
+					JOptionPane.showMessageDialog(null, "Record deleted");
 					System.out.println("record deleted");
 
 					//TODO implement a query to reset the autoincrement to last id in the database
@@ -287,12 +301,41 @@ public class MainForm extends JFrame
 
 			}
 		});
+		updatebutton = new JButton("Update Record");
+		updatebutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = namefield.getText();
+				char gender = getGenderBox();
+				String dob = getFormDOB();
+				String address = addressfield.getText();
+				String postcode = postcodefield.getText();
+				String salary = salaryfield.getText();
+				String nin = ninfield.getText();
+				String jobtitle = jobfield.getText();
+				String stdate = getFormStartDate();
+				String email = emailfield.getText();
+
+				String[] idField = noemployeelabel.getText().split(" ");
+
+				Employee testEmp = new Employee(name, gender, nin, dob, address, postcode, salary, stdate, jobtitle, email);
+				int reply = JOptionPane.showConfirmDialog(null,"Do you want to update this record with the new information given ?");
+				if (reply == JOptionPane.YES_OPTION)
+				{
+					EmployeeDAO.insertEmployeeAtID(testEmp, idField[3]);
+				}
+				try {
+					employeesList = dao.selectAllEmployees();
+				}
+				catch(SQLException ex){ex.printStackTrace();}
+				getFirstEmployee();
+
+			}
+		});
 
 		// setting the radioButtons for the first item in the list
 		malecheck = new JRadioButton();
-		malecheck.setEnabled(false);
 		femalecheck = new JRadioButton();
-		femalecheck.setEnabled(false);
 		group = new ButtonGroup();
 		group.add(malecheck);
 		group.add(femalecheck);
@@ -300,39 +343,28 @@ public class MainForm extends JFrame
 		setGenderCheckBox(empToShow.getGender());
 		
 		dobday = new JComboBox(days);
-		dobday.setEnabled(false);
 		dobmonth = new JComboBox(months);
-		dobmonth.setEnabled(false);
 		dobyear = new JComboBox(years);
-		dobyear.setEnabled(false);
 		stdateday = new JComboBox(days);
-		stdateday.setEnabled(false);
 		stdatemonth = new JComboBox(months);
-		stdatemonth.setEnabled(false);
 		stdateyear = new JComboBox(years);
-		stdateyear.setEnabled(false);
 		setComboBoxDates(empToShow.getStartDate(), empToShow.getDob());
 		
 		
-		//test 3 main panels
+		// 3 main panels
 		west = new JPanel();
 		center = new JPanel();
 		east = new JPanel();
 		
-		
-		ImageIcon image = empToShow.getEmployeeImage();
-		Image img = image.getImage();
-		Image newimg = img.getScaledInstance(150, 250, java.awt.Image.SCALE_SMOOTH);
-		image = new ImageIcon(newimg);
-		
-		imagelabel = new JLabel(image);
+		imagelabel = new JLabel();
+		setImage(empToShow.getEmployeeImage());
 		
 		add(west, BorderLayout.WEST);
 		west.setLayout(new GridLayout(0,1));
 		add(center, BorderLayout.CENTER);
 		center.setLayout(new GridLayout(0,1));
 		add(east, BorderLayout.EAST);
-		east.setLayout(new GridLayout(0, 1));
+		east.setLayout(new GridBagLayout());
 		
 
 		west.add(namelabel);
@@ -378,18 +410,36 @@ public class MainForm extends JFrame
 		cleardeletepanel.add(clearbutton);
 		cleardeletepanel.add(deletebutton);
 		clearbutton.setVisible(false);
-		
-		east.add(noemployeelabel);
-		east.add(imagelabel);
-		east.add(backforwardpanel);
+
+
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx=0;
+		c.gridy=0;
+		c.insets = new Insets(5, 5, 5, 5);
+		east.add(noemployeelabel, c);
+		c.gridx=0;
+		c.gridy=1;
+		c.insets = new Insets(1, 1, 1, 1);
+		east.add(imagelabel, c);
+		c.gridx=0;
+		c.gridy=2;
+		east.add(backforwardpanel, c);
 		backforwardpanel.add(backbutton);
 		backforwardpanel.add(forwardbutton);
+		c.gridx=0;
+		c.gridy=3;
+		c.gridwidth= GridBagConstraints.REMAINDER;
+		east.add(updatebutton, c);
 		
 	}
 
 
 
 	// helper functions
+
+	/**
+	 * Displays the next employee details on the form
+	 */
 	public void getNextEmployee()
 	{
 		if (employeeIndex < employeesList.size()-1)
@@ -408,11 +458,14 @@ public class MainForm extends JFrame
 			setGenderCheckBox(empToShow.getGender());
 			setComboBoxDates(empToShow.getStartDate(), empToShow.getDob());
 
-			setImage();
+			setImage(empToShow.getEmployeeImage());
 		}
 		
 	}
-	
+
+	/**
+	 * Displays the previous employee details on the form
+	 */
 	public void getPreviousEmployee()
 	{
 		if (employeeIndex > 0)
@@ -431,11 +484,14 @@ public class MainForm extends JFrame
 			setGenderCheckBox(empToShow.getGender());
 			setComboBoxDates(empToShow.getStartDate(), empToShow.getDob());
 			
-			setImage();
+			setImage(empToShow.getEmployeeImage());
 		}		
 		
 	}
 
+	/**
+	 * Displays the first employee details on the form
+	 */
 	public void getFirstEmployee()
 	{
 		employeeIndex = 0; // set the index to zero so that it won t jump to some weird index
@@ -452,9 +508,13 @@ public class MainForm extends JFrame
 		setGenderCheckBox(empToShow.getGender());
 		setComboBoxDates(empToShow.getStartDate(), empToShow.getDob());
 
-		setImage();
+		setImage(empToShow.getEmployeeImage());
 	}
 
+	/**
+	 * Sets the gender ratio button on the form, given a char gender
+	 * @param gender can be M or F, if different set it to be male
+	 */
 	public void setGenderCheckBox(char gender)
 	{
 		if (gender == 'M' || gender == 'm')
@@ -473,6 +533,10 @@ public class MainForm extends JFrame
 		}
 	}
 
+	/**
+	 * Gets the value of the radio button from the form and returns a char M or F
+	 * @return a char M or F to set in the database
+	 */
 	public char getGenderBox()
 	{
 		if(malecheck.isSelected())
@@ -484,36 +548,85 @@ public class MainForm extends JFrame
 			return 'F';
 		}
 
-		//TODO test only..to be modified to give an error message if no gender selected
 		return 'M';
 	}
 
+	/**
+	 * Gets individual values from the dob combo boxes and creates a string
+	 * @return a string in a date form dd/mm/year
+	 */
 	public String getFormDOB()
 	{
 		String dob = Integer.toString((Integer) dobday.getSelectedItem()) + "/" + Integer.toString((Integer) dobmonth.getSelectedItem()) + "/" + Integer.toString((Integer) dobyear.getSelectedItem());
 		return dob;
 	}
 
+	/**
+	 * Gets individual values from the startdate combo boxes and creates a string
+	 * @return a string in a date form dd/mm/year
+	 */
 	public String getFormStartDate()
 	{
 		String startDate =  Integer.toString((Integer) stdateday.getSelectedItem()) + "/" + Integer.toString((Integer) stdatemonth.getSelectedItem()) + "/" + Integer.toString((Integer) stdateyear.getSelectedItem());
 		return startDate;
 	}
 
-	public void setImage()
+	/**
+	 * Compares two dates by year and return 1 if the first date is less than the second date, -1 if if greater or equal
+	 * @param dob
+	 * @param startDate
+	 * @return 1 or -1
+	 */
+	public int compareFormDates(String dob, String startDate)
 	{
-		try {
+		String[] dobSplit = dob.split("/");
+		String[] startDateSplit = startDate.split("/");
+
+		String newDOB = dobSplit[2];
+		String newStartDate = startDateSplit[2];
+
+		if (Integer.parseInt(newDOB) >= Integer.parseInt(newStartDate) )
+		{
+			return -1;
+		}
+		return 1;
+
+	}
+
+	/**
+	 * Sets the image in the image panel in the form. If the image passed in is null,
+	 * it sets a standard image
+	 * @param anImage an employee image
+	 */
+	public void setImage(ImageIcon anImage)
+	{
+			if (anImage == null)
+			{
+
 				imagelabel.setVisible(true);
-				ImageIcon image = empToShow.getEmployeeImage();
+				ImageIcon image = new ImageIcon("unknown.jpg");
 				Image img = image.getImage();
 				Image newimg = img.getScaledInstance(150, 250, java.awt.Image.SCALE_SMOOTH);
 				image = new ImageIcon(newimg);
 				imagelabel.setIcon(image);
 			}
-		catch (NullPointerException e)
-		{imagelabel.setVisible(false);}
+			else
+			{
+				imagelabel.setVisible(true);
+				ImageIcon image = anImage;
+				Image img = image.getImage();
+				Image newimg = img.getScaledInstance(150, 250, java.awt.Image.SCALE_SMOOTH);
+				image = new ImageIcon(newimg);
+				imagelabel.setIcon(image);
+			}
+
 	}
 
+	/**
+	 * Sets both the combo box dates in the form using the strings given from the database
+	 * @param startDate
+	 * @param DOB
+	 */
 	public void setComboBoxDates(String startDate, String DOB)
 	{
 
@@ -538,6 +651,13 @@ public class MainForm extends JFrame
 
 	}
 
+	/**
+	 * This is the method used by the search form and gets the name typed in the search form and uses it
+	 * to query the database with the selectEmployeeByName method and then sets the main form with the results just obtained
+	 *
+	 * @param aName a name to search for in the database
+	 * @throws SQLException
+	 */
 	public void selectedEmployee(String aName) throws SQLException
 	{
 		try {
@@ -565,6 +685,8 @@ public class MainForm extends JFrame
 			setComboBoxDates(startdate, dob);
 			setGenderCheckBox(gender.charAt(0));
 			noemployeelabel.setText("No. of Employee: " + id);
+
+			setImage(dao.selectEmployeeImageByName(aName));
 
 
 		} catch (NullPointerException e) {

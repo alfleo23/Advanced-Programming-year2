@@ -1,4 +1,5 @@
 package adv_progr_assignment;
+// Alfonso Leone 15002679
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,10 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Created by alfonsoleone on 22/12/16.
+ * This is the search form class. To create a new instance of this class you need to pass in an instance of MainForm
+ *
+ * @author Alfonso Leone
+ * @version 1.0
  */
 
 // could have been done with an input dialogue but choose to to it with multiple forms communicating

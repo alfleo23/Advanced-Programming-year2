@@ -1,4 +1,12 @@
 package adv_progr_assignment;
+// Alfonso Leone 15002679
+
+/**
+ * this is a class that defines an employee and inherits from Person
+ *
+ * @author Alfonso Leone
+ * @version 1.0
+ */
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -12,31 +20,39 @@ public class Employee extends Person
 	private String startDate;
 	private String title;
 	private String email;
-	
+
+	/**
+	 * Employee constructor
+	 *
+	 * @param name
+	 * @param gender
+	 * @param nin
+	 * @param dob
+	 * @param address
+	 * @param postcode
+	 * @param salary
+	 * @param startdate
+	 * @param title
+	 * @param email
+	 */
 	public Employee(String name, char gender, String nin, String dob, String address, String postcode, String salary, String startdate, String title, String email)
 	{
 		super(name, gender, nin, dob,address,postcode);
-		//this.id = id;
 		this.salary = salary;
 		this.startDate = startdate;
 		this.title = title;
 		this.email = email;
 	}
 
+	/**
+	 * a blank Employee constructor that will allow us to manually set
+	 * an employee properties later on in the development
+	 */
 	public Employee()
 	{
 		super();
 	}
 
-	public Employee(String name, char gender, String nin, String dob, String address, String postcode, String salary, String startdate, String title, String email, ImageIcon anImage)
-	{
-		super(name, gender, nin, dob, address, postcode, anImage);
-		//this.id = id;
-		this.salary = salary;
-		this.startDate = startdate;
-		this.title = title;
-		this.email = email;
-	}
 
 	public int getId() {
 		return id;

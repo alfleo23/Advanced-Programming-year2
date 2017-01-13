@@ -1,4 +1,12 @@
 package adv_progr_assignment;
+// Alfonso Leone 15002679
+
+/**
+ * This is a class that defines a person
+ *
+ * @author Alfonso Leone
+ * @version 1.0
+ */
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -16,9 +24,23 @@ public class Person
 	private String Postcode;
 	private ImageIcon employeeImage;
 
+	/**
+	 * this is a blank constructor that will allow us to manually set a person properties
+	 * later on in the development
+	 */
 	public Person()
 	{}
 
+	/**
+	 * Person constructor without an image
+	 *
+	 * @param name
+	 * @param gender
+	 * @param nin national insurance number
+	 * @param dob date of birth
+	 * @param address
+	 * @param postcode
+	 */
 	public Person(String name, char gender, String nin, String dob, String address, String postcode)
 	{
 		this.name = name;
@@ -28,7 +50,18 @@ public class Person
 		this.Address = address;
 		this.Postcode = postcode;	
 	}
-	
+
+	/**
+	 * Person constructor with an image
+	 *
+	 * @param name
+	 * @param gender
+	 * @param nin
+	 * @param dob
+	 * @param address
+	 * @param postcode
+	 * @param anImage the person image
+	 */
 	public Person(String name, char gender, String nin, String dob, String address, String postcode, ImageIcon anImage)
 	{
 		this.name = name;
