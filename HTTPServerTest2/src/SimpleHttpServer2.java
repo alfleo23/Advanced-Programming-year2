@@ -1,11 +1,13 @@
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
 public class SimpleHttpServer2 {
 	public static void main(String[] args) throws Exception {
 		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
@@ -15,26 +17,36 @@ public class SimpleHttpServer2 {
 		server.start();
 		System.out.println("The server is up and running on port 8000");
 	}
+
 	// http://localhost:8000/info
 	static class InfoHandler implements HttpHandler {
 		public void handle(HttpExchange httpExchange) throws IOException {
-			String response = "Use /get?firstname=Alan&lastname=Crispin to see how to handle url parameters";
+			String response = "Use /get to download the file test.pdf from the specified path";
 			SimpleHttpServer2.writeResponse(httpExchange, response.toString());
 		}
 	}
+
 	// http://localhost:8000/get?fisrtname=Alan&lastname=Crispin
 	static class GetHandler implements HttpHandler {
-		public void handle(HttpExchange httpExchange) throws IOException {
-			StringBuilder response = new StringBuilder();
-			Map <String,String>parms =
-					SimpleHttpServer2.queryToMap(httpExchange.getRequestURI().getQuery());
-			response.append("<html><body>");
-			response.append("Forename : " + parms.get("firstname") + "<br/>");
-			response.append("Surname : " + parms.get("lastname") + "<br/>");
-			response.append("</body></html>");
-			SimpleHttpServer2.writeResponse(httpExchange, response.toString());
+		public void handle(HttpExchange t) throws IOException {
+			// Add the required response header for a PDF file
+			Headers h = t.getResponseHeaders();
+			h.add("Content-Type", "application/pdf");
+			// provide a PDF file (you must specify your own path)
+			File file = new File("/Users/alfonsoleone/Desktop/Task_2_Disk_Space_Drama.pdf");
+			byte [] bytearray = new byte [(int)file.length()];
+			FileInputStream fis = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			bis.read(bytearray, 0, bytearray.length);
+			//Send the response.
+			t.sendResponseHeaders(200, file.length());
+			OutputStream os = t.getResponseBody();
+			os.write(bytearray,0,bytearray.length);
+			os.close();
+			bis.close();
 		}
 	}
+
 	public static void writeResponse(HttpExchange httpExchange, String response)
 			throws IOException {
 		httpExchange.sendResponseHeaders(200, response.length());
