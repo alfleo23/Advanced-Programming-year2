@@ -20,6 +20,7 @@ public class Controller {
 
 		Gson gson = new Gson();
 		ArrayList<Employee> employeesInformation = EmployeeDAO.showAllRecords();
+		//TODO create a new arraylist of employee every http request
 
 
 		HttpServer server = HttpServer.create(new InetSocketAddress(8005), 0);
@@ -42,7 +43,9 @@ public class Controller {
 				he.sendResponseHeaders(200, 0);
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(he.getResponseBody()));
 
-				out.write("<html><body>" +
+				out.write("<html><head>" +
+						"<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\"/>" +
+						"</head><body>" +
 						"<h3>Add Employee Form</h3>");
 				out.write("<form method=\"POST\" action=\"/process_emp\">\n" +
 						"  Name:<br>\n" +

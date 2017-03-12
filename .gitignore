@@ -8,3 +8,12 @@ RemoteSystemsTempFiles/*
 *.class
 */bin/
 *.zip
+*.sqlite
+
+*.jpg
+
+*.jar
+
+*.sqlite
+
+*.sqlite
