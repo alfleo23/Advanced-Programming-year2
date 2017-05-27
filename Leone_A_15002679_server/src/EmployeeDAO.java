@@ -8,24 +8,6 @@ public class EmployeeDAO {
 	static Statement statement = null;
 	static ResultSet resultset = null;
 
-//	private static Statement getConnection() {
-//		Connection dbConnection = null;
-//		try {
-//			Class.forName("org.sqlite.JDBC");
-//		} catch (ClassNotFoundException e) {
-//			System.out.println(e.getMessage());
-//		}
-//		try {
-//			String dbURL = "jdbc:sqlite:EmployeesDatabase.sqlite";
-//			dbConnection = DriverManager.getConnection(dbURL);
-//			statement = dbConnection.createStatement();
-//			return statement;
-//		} catch (SQLException e) {
-//			System.out.println(e.getMessage());
-//		}
-//		return statement;
-//	}
-
 	private static Connection getDBConnection() {
 		Connection dbConnection = null;
 		try {
@@ -70,7 +52,6 @@ public class EmployeeDAO {
 				employees.add(emp);
 				System.out.println("Employee added to list");
 			}
-
 
 			System.out.println(" ");
 		} catch (SQLException e) {

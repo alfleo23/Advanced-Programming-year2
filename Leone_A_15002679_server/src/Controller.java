@@ -19,18 +19,26 @@ public class Controller {
 	public static void main(String[] args) throws SQLException, IOException {
 
 		Gson gson = new Gson();
-		ArrayList<Employee> employeesInformation = EmployeeDAO.showAllRecords();
-		//TODO create a new arraylist of employee every http request
-
+		//ArrayList<Employee> employeesInformation = null;
 
 		HttpServer server = HttpServer.create(new InetSocketAddress(8005), 0);
 		server.createContext("/", new HttpHandler() {
 			@Override
 			public void handle(HttpExchange he) throws IOException {
 
+				ArrayList<Employee> employeesInformation = null;
 				he.sendResponseHeaders(200, 0);
+				try {
+					System.out.println("test 1");
+					employeesInformation = EmployeeDAO.showAllRecords();
+					System.out.println("test 2");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(he.getResponseBody()));
 				String myJson = gson.toJson(employeesInformation);
+				System.out.println("I finished");
+				System.out.println("");
 				out.write(myJson);
 				out.close();
 			}
@@ -130,7 +138,14 @@ public class Controller {
 
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(he.getResponseBody()));
 				he.sendResponseHeaders(200, 0);
+				out.write("<html><head>" +
+						"<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css\"/>" +
+						"</head><body>");
 				out.write("Record successfully added :)");
+				out.write("<form action=\"http://localhost:8005\">\n" +
+						"    <input type=\"submit\" value=\"Go back to first page\" />\n" +
+						"</form>");
+				out.write("</body></html>");
 				out.close();
 
 			}
