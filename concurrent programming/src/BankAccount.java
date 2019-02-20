@@ -80,8 +80,7 @@ public class BankAccount
 	 * stored inside the ArrayList transactions. There is an IF statement to determine whether
 	 * the value of the transaction has to be printed below the deposit or withdrawal column.
 	 */
-	public void printTransactions()
-	{
+	public void printTransactions() throws InterruptedException {
 		System.out.println("Transaction" + "\t" + "Withdrawal" + "\t" + "Deposit" + "\t\t" + "Balance");
 		System.out.println("");
 		
@@ -92,11 +91,14 @@ public class BankAccount
 			{
 				System.out.print(i+1 + " ");
 				System.out.println("("+(t.getThreadId()-9)+")" + "\t\t" + t.getValue() + "\t\t" + "" + "\t\t" + t.getAccountBalance());
+				Thread.sleep(200);
 			}
 			else
 			{
 				System.out.print(i+1 + " ");
 				System.out.println("("+(t.getThreadId()-9)+")" + "\t\t" + "" + "\t\t" + t.getValue()  + "\t\t" + t.getAccountBalance());
+				Thread.sleep(200);
+
 			}
 		}
 		

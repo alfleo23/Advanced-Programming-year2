@@ -61,8 +61,12 @@ public class MyAccount
 		System.out.println("");
 		System.out.println("COMPLETE !!"); 
 		System.out.println(" ");
-		account.printTransactions();
-		
+		try {
+			account.printTransactions();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 
 	} // end of main
 

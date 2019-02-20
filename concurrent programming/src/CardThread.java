@@ -37,17 +37,20 @@ public class CardThread extends Thread
 		for (int i = 0; i < 20; i++)
 		{
 			int value = (int) (Math.random() * 10);
+
 			if (Math.random() > 0.5) 
 			{
-				synchronized (account) {
+				synchronized (account)
+				{
 					account.withdraw(value);
 					account.addTransaction(Transaction.WITHDRAWAL, value, getId());
 					this.localBalance = this.localBalance + value;				
 				}
 			}
-
-			else {
-				synchronized (account) {					
+			else
+			{
+				synchronized (account)
+				{
 					account.deposit(value);
 					account.addTransaction(Transaction.DEPOSIT, value, getId());
 					this.localBalance = this.localBalance - value;					
